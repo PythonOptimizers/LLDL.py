@@ -1,0 +1,36 @@
+cimport numpy as cnp
+
+cdef extern from "math.h":
+    double sqrt(double x) nogil
+
+
+cdef bint attempt_lldl_@index@_@type@(unsigned int n,
+                                      cnp.ndarray[cnp.@type | lower@_t, ndim=1] d,
+                                      cnp.ndarray[cnp.@type | lower@_t, ndim=1] lvals,
+                                      cnp.ndarray[cnp.@index | lower@_t, ndim=1] rowind,
+                                      cnp.ndarray[cnp.@index | lower@_t, ndim=1] colptr,
+                                      unsigned int memory=?)
+
+cdef cnp.@index | lower@_t flip_@index@(cnp.@index | lower@_t i)
+
+cdef cnp.@index | lower@_t unflip_@index@(cnp.@index | lower@_t i)
+
+cdef bint marked_@index@(cnp.@index | lower@_t * w, cnp.@index | lower@_t j)
+
+cdef mark_@index@(cnp.@index | lower@_t * w, cnp.@index | lower@_t j)
+
+cdef reach_@index@(cnp.@index | lower@_t n,
+                    cnp.@index | lower@_t * Gi,
+                    cnp.@index | lower@_t * Gr,
+                    cnp.@index | lower@_t * Bi,
+                    cnp.@index | lower@_t * Br,
+                    int k,
+                    cnp.ndarray[cnp.@index | lower@_t, ndim=1] xi)
+
+cdef cnp.@index | lower@_t deep_first_sort_@index@_@type@(int j,
+                                                          cnp.@index | lower@_t * Gi,
+                                                          cnp.@index | lower@_t * Gr,
+                                                          cnp.@index | lower@_t top,
+                                                          cnp.@index | lower@_t * xi,
+                                                          cnp.@index | lower@_t * pstack,
+                                                          const cnp.@index | lower@_t * pinv)
