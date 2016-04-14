@@ -37,14 +37,14 @@ If you want to use these facilities, set the location of the `CySparse` library 
 3. Install `LLDL.py`
 
    - Python version
-            ```bash
-            python setup.py build
-            python setup.py install [--prefix=...]
-            ```
+    ```bash
+    python setup.py build
+    python setup.py install [--prefix=...]
+    ```
 
    - Cython version
-            ```bash
-            python generate_code.py
-    	    python setup.py build
-    	    python setup.py install [--prefix=...]
-            ```
+    ```bash
+    python generate_code.py
+    python setup.py build
+    python setup.py install [--prefix=...]
+    ```
