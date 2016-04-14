@@ -1,12 +1,6 @@
 # LLDL.py
 Limited-memory LDL factorization in Python
 
-[![Build Status](https://travis-ci.com/PythonOptimizers/qr_mumps.py.svg?token=33z5zptBt5SzXC4ZvLpF&branch=without-cython)](https://travis-ci.com/PythonOptimizers/qr_mumps.py)
-
-Cython/Python inferface to qr_mumps ([A multithreaded multifrontal QR solver](http://buttari.perso.enseeiht.fr/qr_mumps/)).
-
-It supports all four types (single real, double real, single complex and double complex).
-
 ## Dependencies
 
 For the Python version:
@@ -32,7 +26,7 @@ If you want to use these facilities, set the location of the `CySparse` library 
 
 1. Clone this repo
     ```bash
-    git clone https://github.com/PythonOptimizers/NLP.py
+    git clone https://github.com/PythonOptimizers/LLDL.py
     ```
 
 2. Copy `site.template.cfg` to `site.cfg` and modify `site.cfg` to match your configuration
