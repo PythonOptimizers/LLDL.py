@@ -10,15 +10,14 @@ cdef extern from "math.h":
 
 cimport cython
 
-{% raw %}
+
 @cython.boundscheck(False)
 @cython.cdivision(True)
-{% endraw %}
-cpdef lldl_@index@_@type@(unsigned int n, unsigned int m,
-                          cnp.ndarray[cnp.@type | lower@_t, ndim=1] adiag,
-                          cnp.ndarray[cnp.@index | lower@_t, ndim=1] colptrT,
-                          cnp.ndarray[cnp.@index | lower@_t, ndim=1] rowindT,
-                          cnp.ndarray[cnp.@type | lower@_t, ndim=1] valuesT,
+cpdef lldl_INT64_FLOAT64(unsigned int n, unsigned int m,
+                          cnp.ndarray[cnp.float64_t, ndim=1] adiag,
+                          cnp.ndarray[cnp.int64_t, ndim=1] colptrT,
+                          cnp.ndarray[cnp.int64_t, ndim=1] rowindT,
+                          cnp.ndarray[cnp.float64_t, ndim=1] valuesT,
                           unsigned int memory):
     """"Compute the incomplete LDL^T factorization of A with limited-memory.
 
@@ -30,8 +29,8 @@ cpdef lldl_@index@_@type@(unsigned int n, unsigned int m,
     if memory < 0:
         raise ValueError("Limited-memory parameter must be nonnegative")
 
-    cdef cnp.ndarray[cnp.@type | lower@_t, ndim = 1] wa1 = np.zeros(n, dtype=np.@type | lower@)
-    cdef cnp.ndarray[cnp.@type | lower@_t, ndim = 1] s = np.ones(n, dtype=np.@type | lower@)
+    cdef cnp.ndarray[cnp.float64_t, ndim = 1] wa1 = np.zeros(n, dtype=np.float64)
+    cdef cnp.ndarray[cnp.float64_t, ndim = 1] s = np.ones(n, dtype=np.float64)
 
     cdef unsigned int col, k, row
     cdef unsigned int max_increase_alpha, nb_increase_alpha
@@ -39,15 +38,15 @@ cpdef lldl_@index@_@type@(unsigned int n, unsigned int m,
     cdef unsigned int n_mem = n * memory
 
     cdef bint success, tired
-    cdef cnp.@type | lower@_t alpha = 0.0
-    cdef cnp.@type | lower@_t alpha_min, val
+    cdef cnp.float64_t alpha = 0.0
+    cdef cnp.float64_t alpha_min, val
 
     # Make room to store L
     cdef unsigned int nnzLmax = max(nnzT + n_mem, np.divide(n * (n - 1), 2))
-    cdef cnp.ndarray[cnp.@type | lower@_t, ndim = 1] d = np.zeros(n)
-    cdef cnp.ndarray[cnp.@type | lower@_t, ndim = 1] lvals = np.zeros(nnzLmax)
-    cdef cnp.ndarray[cnp.@index | lower@_t, ndim = 1] rowind = np.zeros(nnzLmax, dtype=np.@index | lower@)
-    cdef cnp.ndarray[cnp.@index | lower@_t, ndim = 1] colptr = np.zeros(n + 1, dtype=np.@index | lower@)
+    cdef cnp.ndarray[cnp.float64_t, ndim = 1] d = np.zeros(n)
+    cdef cnp.ndarray[cnp.float64_t, ndim = 1] lvals = np.zeros(nnzLmax)
+    cdef cnp.ndarray[cnp.int64_t, ndim = 1] rowind = np.zeros(nnzLmax, dtype=np.int64)
+    cdef cnp.ndarray[cnp.int64_t, ndim = 1] colptr = np.zeros(n + 1, dtype=np.int64)
 
     # Compute the 2-norm of columns of A.
     for col in xrange(n):
@@ -102,7 +101,7 @@ cpdef lldl_@index@_@type@(unsigned int n, unsigned int m,
                 lvals[n_mem + k] = valuesT[k] * s[col] * s[row]  # = S A S.
 
         # Attempt a factorization.
-        success = attempt_lldl_@index@_@type@(n, d, lvals, rowind, colptr, memory=memory)
+        success = attempt_lldl_INT64_FLOAT64(n, d, lvals, rowind, colptr, memory=memory)
 
         # Increase shift if the factorization didn't succeed.
         if not success:
@@ -128,18 +127,17 @@ cpdef lldl_@index@_@type@(unsigned int n, unsigned int m,
             np.asarray(lvals[:nnzL]),
             np.asarray(d), alpha)
 
-{% raw %}
+
 
 
 @cython.profile(True)
 @cython.wraparound(False)
 @cython.boundscheck(False)
-{% endraw %}
-cdef bint attempt_lldl_@index@_@type@(unsigned int n,
-                                      cnp.ndarray[cnp.@type | lower@_t, ndim=1] d,
-                                      cnp.ndarray[cnp.@type | lower@_t, ndim=1] lvals,
-                                      cnp.ndarray[cnp.@index | lower@_t, ndim=1] rowind,
-                                      cnp.ndarray[cnp.@index | lower@_t, ndim=1] colptr,
+cdef bint attempt_lldl_INT64_FLOAT64(unsigned int n,
+                                      cnp.ndarray[cnp.float64_t, ndim=1] d,
+                                      cnp.ndarray[cnp.float64_t, ndim=1] lvals,
+                                      cnp.ndarray[cnp.int64_t, ndim=1] rowind,
+                                      cnp.ndarray[cnp.int64_t, ndim=1] colptr,
                                       unsigned int memory=0):
 
     cdef int col, col_start, col_end, i, k, k1, kth, newk
@@ -148,23 +146,23 @@ cdef bint attempt_lldl_@index@_@type@(unsigned int n,
     cdef unsigned int kth_col_start, kth_col_end, new_col_start, new_col_end
     # cdef unsigned int n_mem = n * memory
 
-    cdef cnp.@type | lower@_t lval
+    cdef cnp.float64_t lval
 
     # Work arrays.
     # contents of the current column of A.
-    cdef cnp.ndarray[cnp.@type | lower@_t, ndim = 1] w = np.zeros(n, dtype=np.@type | lower@)
+    cdef cnp.ndarray[cnp.float64_t, ndim = 1] w = np.zeros(n, dtype=np.float64)
     # row indices of the nonzeros in the current column after it's been loaded
     # into w.
-    cdef cnp.ndarray[cnp.@index | lower@_t, ndim = 1] indr = np.zeros(n, dtype=np.@index | lower@)
+    cdef cnp.ndarray[cnp.int64_t, ndim = 1] indr = np.zeros(n, dtype=np.int64)
     # indf[col] = position in w of the next entry in column col to be used
     # during the factorization.
-    cdef cnp.ndarray[cnp.@index | lower@_t, ndim = 1] indf = np.ones(n, dtype=np.@index | lower@)
+    cdef cnp.ndarray[cnp.int64_t, ndim = 1] indf = np.ones(n, dtype=np.int64)
     indf *= -1
     # llist[col] = linked list of columns that will update column col.
-    cdef cnp.ndarray[cnp.@index | lower@_t, ndim = 1] llist = np.ones(n, dtype=np.@index | lower@)
+    cdef cnp.ndarray[cnp.int64_t, ndim = 1] llist = np.ones(n, dtype=np.int64)
     llist *= -1
-    # cdef cnp.ndarray[cnp.@index|lower@_t, ndim=1] perm = np.zeros(n,
-    # dtype=np.@index|lower@)
+    # cdef cnp.ndarray[cnp.int64_t, ndim=1] perm = np.zeros(n,
+    # dtype=np.int64)
 
     # Attempt an incomplete LDL factorization.
     col_start = colptr[0]
@@ -246,7 +244,7 @@ cdef bint attempt_lldl_@index@_@type@(unsigned int n,
         if kth >= 0:  # No need to sort if we keep all elements.
             perm = np.argpartition(np.fabs(w[indr[:nzcol]]), kth)
             # TODO: change sorting algorithm (default: quicksort)
-            # temp = np.array(indr, dtype=np.@index|lower@)
+            # temp = np.array(indr, dtype=np.int64)
             a = indr[perm[kth:]]
             a.sort()
             indr[:nzcol] = a[:]  # temp
@@ -278,74 +276,74 @@ cdef bint attempt_lldl_@index@_@type@(unsigned int n,
     return True
 
 
-cdef cnp.@index | lower@_t flip_@index@(cnp.@index | lower@_t i):
+cdef cnp.int64_t flip_INT64(cnp.int64_t i):
     return -i - 2
 
-cdef cnp.@index | lower@_t unflip_@index@(cnp.@index | lower@_t i):
+cdef cnp.int64_t unflip_INT64(cnp.int64_t i):
     if i < 0:
-        return flip_@index@(i)
+        return flip_INT64(i)
     else:
         return i
 
-cdef bint marked_@index@(cnp.@index | lower@_t * w, cnp.@index | lower@_t j):
+cdef bint marked_INT64(cnp.int64_t * w, cnp.int64_t j):
     return w[j] < 0
 
-cdef mark_@index@(cnp.@index | lower@_t * w, cnp.@index | lower@_t j):
-    w[j] = flip_@index@(w[j])
+cdef mark_INT64(cnp.int64_t * w, cnp.int64_t j):
+    w[j] = flip_INT64(w[j])
     return
 
 # cdef int reach(CSCSparseMatrix_INT64_t_FLOAT64_t G,
 # CSCSparseMatrix_INT64_t_FLOAT64_t B, int k, INT64_t *xi, const int
 # *pinv):
-# , np.ndarray[cnp.@index|lower@_t, ndim=1] pinv):
+# , np.ndarray[cnp.int64_t, ndim=1] pinv):
 
-cdef reach_@index@(cnp.@index | lower@_t n,
-                    cnp.@index | lower@_t * Gi,
-                    cnp.@index | lower@_t * Gr,
-                    cnp.@index | lower@_t * Bi,
-                    cnp.@index | lower@_t * Br,
+cdef reach_INT64(cnp.int64_t n,
+                    cnp.int64_t * Gi,
+                    cnp.int64_t * Gr,
+                    cnp.int64_t * Bi,
+                    cnp.int64_t * Br,
                     int k,
-                    cnp.ndarray[cnp.@index | lower@_t, ndim=1] xi):
+                    cnp.ndarray[cnp.int64_t, ndim=1] xi):
 
     cdef:
-        cnp.@index | lower@_t p
-        cnp.@index | lower@_t top
+        cnp.int64_t p
+        cnp.int64_t top
 
     # TODO: check if xi is not null
     top = n
     print 'top:', top
     for p in xrange(Bi[k], Bi[k + 1]):
         # check inputs
-        print "  p: %d, marked: %g" % (p, marked_@index@(Gi, Br[p]))
-        if not marked_@index@(Gi, Br[p]):
+        print "  p: %d, marked: %g" % (p, marked_INT64(Gi, Br[p]))
+        if not marked_INT64(Gi, Br[p]):
             # <int *> cnp.PyArray_DATA(pinv)) # start a deep first sort at unmarked node i
-            top = deep_first_sort_@index@_@type@(Br[p], Gi, Gr, top,
-                                                 < cnp.@index | lower@_t * > cnp.PyArray_DATA(xi),
-                                                 < cnp.@index | lower@_t * > cnp.PyArray_DATA(xi) + n,
+            top = deep_first_sort_INT64_FLOAT64(Br[p], Gi, Gr, top,
+                                                 < cnp.int64_t * > cnp.PyArray_DATA(xi),
+                                                 < cnp.int64_t * > cnp.PyArray_DATA(xi) + n,
                                                  NULL)
             print 'dfs: ', top
             # sys.exit()
 
     for p in xrange(top, n):
-        mark_@index@(Gi, xi[p])  # restore G
+        mark_INT64(Gi, xi[p])  # restore G
     return top
 
 
-cdef cnp.@index | lower@_t deep_first_sort_@index@_@type@(int j,
-                                                          cnp.@index | lower@_t * Gi,
-                                                          cnp.@index | lower@_t * Gr,
-                                                          cnp.@index | lower@_t top,
-                                                          cnp.@index | lower@_t * xi,
-                                                          cnp.@index | lower@_t * pstack,
-                                                          const cnp.@index | lower@_t * pinv):
+cdef cnp.int64_t deep_first_sort_INT64_FLOAT64(int j,
+                                                          cnp.int64_t * Gi,
+                                                          cnp.int64_t * Gr,
+                                                          cnp.int64_t top,
+                                                          cnp.int64_t * xi,
+                                                          cnp.int64_t * pstack,
+                                                          const cnp.int64_t * pinv):
 
     cdef:
-        cnp.@index | lower@_t i
-        cnp.@index | lower@_t p
-        cnp.@index | lower@_t p2
-        cnp.@index | lower@_t done
-        cnp.@index | lower@_t jnew
-        cnp.@index | lower@_t head = 0
+        cnp.int64_t i
+        cnp.int64_t p
+        cnp.int64_t p2
+        cnp.int64_t done
+        cnp.int64_t jnew
+        cnp.int64_t head = 0
 
     # TODO: check inputs
     # if (!xi || !pstack) return (-1) ;    /* check inputs */
@@ -360,16 +358,16 @@ cdef cnp.@index | lower@_t deep_first_sort_@index@_@type@(int j,
         else:
             jnew = j
 
-        print '    j,jnew: %d, marked: %g' % (jnew, marked_@index@(Gi, j))
+        print '    j,jnew: %d, marked: %g' % (jnew, marked_INT64(Gi, j))
 
-        if not marked_@index@(Gi, j):
+        if not marked_INT64(Gi, j):
             print '    before mark: ', Gi[j]
-            mark_@index@(Gi, j)  # mark node j as visited
+            mark_INT64(Gi, j)  # mark node j as visited
             print '    after mark: ', Gi[j]
             if jnew < 0:
                 pstack[head] = 0
             else:
-                pstack[head] = unflip_@index@(Gi[jnew])
+                pstack[head] = unflip_INT64(Gi[jnew])
 
             print '    stack[head]:', pstack[head]
 
@@ -377,11 +375,11 @@ cdef cnp.@index | lower@_t deep_first_sort_@index@_@type@(int j,
         if jnew < 0:
             p2 = 0
         else:
-            p2 = unflip_@index@(Gi[jnew + 1])
+            p2 = unflip_INT64(Gi[jnew + 1])
 
         for p in xrange(pstack[head], p2):  # examine all neighbors of j
             i = Gr[p]  # consider neighbor node i
-            if marked_@index@(Gi, i):
+            if marked_INT64(Gi, i):
                 continue  # skip visited node i
             pstack[head] = p
             head += 1
@@ -396,16 +394,16 @@ cdef cnp.@index | lower@_t deep_first_sort_@index@_@type@(int j,
     return top
 
 
-# cpdef int sparse_solve_@index@_@type@(cnp.@index | lower@_t n,
-#                                       cnp.@index | lower@_t * Gi,
-#                                       cnp.@index | lower@_t * Gr,
-#                                       cnp.@type | lower@_t * Gv,
-#                                       cnp.@index | lower@_t * Bi,
-#                                       cnp.@index | lower@_t * Br,
-#                                       cnp.@type | lower@_t * Bv,
+# cpdef int sparse_solve_INT64_FLOAT64(cnp.int64_t n,
+#                                       cnp.int64_t * Gi,
+#                                       cnp.int64_t * Gr,
+#                                       cnp.float64_t * Gv,
+#                                       cnp.int64_t * Bi,
+#                                       cnp.int64_t * Br,
+#                                       cnp.float64_t * Bv,
 #                                       int k,
-#                                       cnp.ndarray[cnp.@index|lower@_t, ndim=1] xi,
-#                                       cnp.ndarray[cnp.@type|lower@_t, ndim=1] x,
+#                                       cnp.ndarray[cnp.int64_t, ndim=1] xi,
+#                                       cnp.ndarray[cnp.float64_t, ndim=1] x,
 #                                       int lo):
 #
 #     cdef:
@@ -424,7 +422,7 @@ cdef cnp.@index | lower@_t deep_first_sort_@index@_@type@(int j,
 #     Gi = G.ind ; Gr = G.row ; Gv = G.val ; n = G.nrow
 #     Bi = B.ind ; Br = B.row ; Bv = B.val
 #     print 'here'
-#     top = reach_@index@(Gn, Gi, Gr, Bi, Br, k, <cnp.@type|lower@_t *> cnp.PyArray_DATA(xi) , pinv) # xi[top..n-1] = Reach(B(:,k))
+#     top = reach_INT64(Gn, Gi, Gr, Bi, Br, k, <cnp.float64_t *> cnp.PyArray_DATA(xi) , pinv) # xi[top..n-1] = Reach(B(:,k))
 #     print 'top:', top
 #
 #     # clear x
@@ -464,15 +462,15 @@ cdef cnp.@index | lower@_t deep_first_sort_@index@_@type@(int j,
 #
 #     return top
 
-cpdef dense_lsolve_@index@_@type@(cnp.@index | lower@_t n,
-                                  cnp.ndarray[cnp.@index | lower@_t, ndim=1] Li,
-                                  cnp.ndarray[cnp.@index | lower@_t, ndim=1] Lr,
-                                  cnp.ndarray[cnp.@type | lower@_t, ndim=1] Lv,
-                                  cnp.ndarray[cnp.@type | lower@_t, ndim=1] x):
+cpdef dense_lsolve_INT64_FLOAT64(cnp.int64_t n,
+                                  cnp.ndarray[cnp.int64_t, ndim=1] Li,
+                                  cnp.ndarray[cnp.int64_t, ndim=1] Lr,
+                                  cnp.ndarray[cnp.float64_t, ndim=1] Lv,
+                                  cnp.ndarray[cnp.float64_t, ndim=1] x):
 
     cdef:
-        cnp.@index | lower@_t p
-        cnp.@index | lower@_t j
+        cnp.int64_t p
+        cnp.int64_t j
 
     # TODO: checks on inputs
     for j in xrange(n):
@@ -481,15 +479,15 @@ cpdef dense_lsolve_@index@_@type@(cnp.@index | lower@_t n,
             x[Lr[p]] -= Lv[p] * x[j]
     return
 
-cpdef dense_ltsolve_@index@_@type@(cnp.@index | lower@_t n,
-                                   cnp.ndarray[cnp.@index | lower@_t, ndim=1] Li,
-                                   cnp.ndarray[cnp.@index | lower@_t, ndim=1] Lr,
-                                   cnp.ndarray[cnp.@type | lower@_t, ndim=1] Lv,
-                                   cnp.ndarray[cnp.@type | lower@_t, ndim=1] x):
+cpdef dense_ltsolve_INT64_FLOAT64(cnp.int64_t n,
+                                   cnp.ndarray[cnp.int64_t, ndim=1] Li,
+                                   cnp.ndarray[cnp.int64_t, ndim=1] Lr,
+                                   cnp.ndarray[cnp.float64_t, ndim=1] Lv,
+                                   cnp.ndarray[cnp.float64_t, ndim=1] x):
 
     cdef:
-        cnp.@index | lower@_t p
-        cnp.@index | lower@_t j
+        cnp.int64_t p
+        cnp.int64_t j
 
     # TODO: checks on inputs
     for j in xrange(n - 1, -1, -1):
