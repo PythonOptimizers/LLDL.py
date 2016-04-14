@@ -1,6 +1,5 @@
 # configuration file
 site.cfg
-setup.py # will be generated
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
@@ -10,9 +9,10 @@ __pycache__/
 *.so
 
 # Generated files
-*.c
 *.pyx
 *.pxd
+setup.py
+*.c
 
 # Distribution / packaging
 .Python
