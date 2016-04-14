@@ -1,5 +1,5 @@
-from cpython.mem cimport PyMem_Malloc
-
+# -*- coding: utf-8 -*-
+"""Base class for the LLDL factorization."""
 cimport numpy as cnp
 import numpy as np
 

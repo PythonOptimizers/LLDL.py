@@ -16,6 +16,7 @@ before_install:
   - pip install -q pytest-cov
 
 install:
+  - cp site.template.cfg site.cfg
   - python setup.py install
 
 script:
