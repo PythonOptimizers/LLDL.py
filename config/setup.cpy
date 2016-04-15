@@ -128,19 +128,18 @@ lldl_ext.append(Extension(name="lldl.src.lldl_@index_type@_@element_type@",
     {% endfor %}
 {% endfor %}
 
-# if build_cysparse_ext:
-# {% for index_type in index_list %}
-#     {% for element_type in type_list %}
-#         cysparse_ext_params_@index_type@_@element_type@ = copy.deepcopy(ext_params)
-#         cysparse_ext_params_@index_type@_@element_type@['include_dirs'].extend(cysparse_rootdir)
-#         cysparse_ext_params_@index_type@_@element_type@['include_dirs'].extend(lldl_include_dirs)
-#         lldl_ext.append(Extension(name="lldl.src.cysparse_lldl_@index_type@_@element_type@",
-#                                   sources=['lldl/src/cysparse_lldl_@index_type@_@element_type@.pxd',
-#                                            'lldl/src/cysparse_lldl_@index_type@_@element_type@.pyx'],
-#                                   **cysparse_ext_params_@index_type@_@element_type@))
-#
-#     {% endfor %}
-# {% endfor %}
+if build_cysparse_ext:
+{% for index_type in index_list %}
+ {% for element_type in type_list %}
+    cysparse_ext_params_@index_type@_@element_type@ = copy.deepcopy(ext_params)
+    cysparse_ext_params_@index_type@_@element_type@['include_dirs'].extend(cysparse_rootdir)
+    lldl_ext.append(Extension(name="lldl.src.cysparse_lldl_@index_type@_@element_type@",
+                                   sources=['lldl/src/cysparse_lldl_@index_type@_@element_type@.pxd',
+                                            'lldl/src/cysparse_lldl_@index_type@_@element_type@.pyx'],
+                                   **cysparse_ext_params_@index_type@_@element_type@))
+
+     {% endfor %}
+ {% endfor %}
 
 
 packages_list = ['lldl', 'lldl.src', 'tests']
