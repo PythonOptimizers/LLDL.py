@@ -9,6 +9,16 @@ cdef extern from "math.h":
     double sqrt(double x) nogil
 
 cimport cython
+import logging
+
+
+logger = logging.getLogger(__name__)
+
+cdef int verbosity = 0
+cdef inline void log(char* msg, int level):
+     if level >= verbosity:
+         logger.log(level, msg)
+
 
 {% raw %}
 @cython.boundscheck(False)
@@ -128,9 +138,8 @@ cpdef lldl_@index@_@type@(unsigned int n, unsigned int m,
             np.asarray(lvals[:nnzL]),
             np.asarray(d), alpha)
 
+
 {% raw %}
-
-
 @cython.profile(True)
 @cython.wraparound(False)
 @cython.boundscheck(False)
@@ -146,9 +155,9 @@ cdef bint attempt_lldl_@index@_@type@(unsigned int n,
     cdef int nzcol, row
     cdef unsigned int nz_to_keep
     cdef unsigned int kth_col_start, kth_col_end, new_col_start, new_col_end
-    # cdef unsigned int n_mem = n * memory
 
     cdef cnp.@type | lower@_t lval
+
 
     # Work arrays.
     # contents of the current column of A.
@@ -172,16 +181,20 @@ cdef bint attempt_lldl_@index@_@type@(unsigned int n,
 
     # Scan each column in turn.
     for col in xrange(n):
+        # print "col:", col
         # Load column col of A into w.
         col_end = colptr[col + 1]
 
         nzcol = 0
+        # print "col_start:", col_start, "col_end:", col_end
         for k in xrange(col_start, col_end):
             row = rowind[k]
             w[row] = lvals[k]  # w[row] = A[row, col] for each col in turn.
             indr[nzcol] = row
             indf[row] = 0
             nzcol += 1
+            # print "row:", row  #, "w:", w, "indf:", indf, "indr:", indr
+
 
         # nzcol = number of nonzeros in current column.
         # (indr, w): sparse representation of current column:
@@ -244,12 +257,20 @@ cdef bint attempt_lldl_@index@_@type@(unsigned int n,
         # Sort the row indices of the nz_to_keep largest elements.
 
         if kth >= 0:  # No need to sort if we keep all elements.
+            # print np.fabs(w[indr[:nzcol]])
             perm = np.argpartition(np.fabs(w[indr[:nzcol]]), kth)
             # TODO: change sorting algorithm (default: quicksort)
             # temp = np.array(indr, dtype=np.@index|lower@)
+            # print len(perm)
             a = indr[perm[kth:]]
+            # print a
             a.sort()
-            indr[:nzcol] = a[:]  # temp
+            # print "here"
+            # print "kth:", kth
+            # print "len(a):", len(a)
+            # print "nzcol", nzcol
+            indr[kth:nzcol] = a[:]  # temp
+            # print "here1"
 
         new_col_start = colptr[col]
         new_col_end = new_col_start + nz_to_keep
@@ -273,8 +294,12 @@ cdef bint attempt_lldl_@index@_@type@(unsigned int n,
             indf[row] = -1
         col_start = colptr[col + 1]
         colptr[col + 1] = new_col_end
+        # print n+1
+
+    # print n+2
 
     colptr[n] = colptr[n - 1]
+
     return True
 
 
