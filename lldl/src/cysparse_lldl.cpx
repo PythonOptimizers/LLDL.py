@@ -21,9 +21,12 @@ cdef class CySparseLLDL_@index@_@type@:
                   verbose=False):
 
         self.n = A.nrow
+        self.A = A
+        self.memory = memory
 
+    def factorize(self):
         # Converting A to compressed sparse column format
-        A_CSC = A.to_csc()
+        A_CSC = self.A.to_csc()
 
         # Create a lower triangular matrix from A_CSC
         T = A_CSC.tril(-1)
@@ -31,9 +34,9 @@ cdef class CySparseLLDL_@index@_@type@:
         (colptrT, rowindT, valuesT) = T.get_numpy_arrays()
 
         (colptr, rowind, lvals, d, alpha) = lldl_@index@_@type@(self.n, self.n,
-                                                                A.diag(),
+                                                                self.A.diag(),
                                                                 colptrT, rowindT,
-                                                                valuesT, memory)
+                                                                valuesT, self.memory)
         self.nnzL = len(lvals)
 
         self.L = MakeCSCSparseMatrix_@index@_t_@type@_t(nrow=self.n,
@@ -44,9 +47,12 @@ cdef class CySparseLLDL_@index@_@type@:
                                                         val= < @type@_t * > cnp.PyArray_DATA(lvals),
                                                         #                                               ind=Li, row=Lr, val=Lv,
                                                         store_symmetric=False, store_zero=False)
+        # I = DiagonalLLSparseMatrix(nrow=self.n, ncol=self.n, element=1)
+        return (self.L, d, alpha)
 
-    def get_L(self):
-        return self.L
+    # def get_L(self):
+    #     return self.L + I
+
 
 # cpdef dense_lsolve(CSCSparseMatrix_@index@_t_@type@_t L,
 # np.ndarray[DDTYPE_t, ndim=1] x):

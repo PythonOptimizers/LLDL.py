@@ -1,4 +1,6 @@
 from cysparse.common_types.cysparse_types cimport *
+
+from cysparse.sparse.ll_mat_matrices.ll_mat_@index@_t_@type@_t cimport LLSparseMatrix_@index@_t_@type@_t
 from cysparse.sparse.csc_mat_matrices.csc_mat_@index@_t_@type@_t cimport CSCSparseMatrix_@index@_t_@type@_t, MakeCSCSparseMatrix_@index@_t_@type@_t
 
 from cpython.mem cimport PyMem_Malloc
@@ -17,4 +19,6 @@ cimport cython
 cdef class CySparseLLDL_@index@_@type@:
     cdef @index@_t n
     cdef @index@_t nnzL
+    cdef @index@_t memory
+    cdef LLSparseMatrix_@index@_t_@type@_t A
     cdef CSCSparseMatrix_@index@_t_@type@_t L
