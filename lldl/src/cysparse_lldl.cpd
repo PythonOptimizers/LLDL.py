@@ -1,0 +1,20 @@
+from cysparse.common_types.cysparse_types cimport *
+from cysparse.sparse.csc_mat_matrices.csc_mat_@index@_t_@type@_t cimport CSCSparseMatrix_@index@_t_@type@_t, MakeCSCSparseMatrix_@index@_t_@type@_t
+
+from cpython.mem cimport PyMem_Malloc
+
+cimport numpy as cnp
+import numpy as np
+
+import sys
+
+cdef extern from "math.h":
+    double sqrt(double x) nogil
+
+cimport cython
+
+
+cdef class CySparseLLDL_@index@_@type@:
+    cdef @index@_t n
+    cdef @index@_t nnzL
+    cdef CSCSparseMatrix_@index@_t_@type@_t L

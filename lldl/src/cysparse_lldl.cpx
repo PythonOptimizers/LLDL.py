@@ -1,0 +1,55 @@
+from cysparse.common_types.cysparse_types cimport *
+from cysparse.sparse.ll_mat_matrices.ll_mat_@index@_t_@type@_t cimport LLSparseMatrix_@index@_t_@type@_t
+from cysparse.sparse.csc_mat_matrices.csc_mat_@index@_t_@type@_t cimport CSCSparseMatrix_@index@_t_@type@_t, MakeCSCSparseMatrix_@index@_t_@type@_t
+from lldl.src.lldl_@index@_@type@ import lldl_@index@_@type@
+from cpython.mem cimport PyMem_Malloc
+
+cimport numpy as cnp
+import numpy as np
+
+import sys
+
+cdef extern from "math.h":
+    double sqrt(double x) nogil
+
+cimport cython
+
+
+cdef class CySparseLLDL_@index@_@type@:
+
+    def __cinit__(self, LLSparseMatrix_@index@_t_@type@_t A, memory=5,
+                  verbose=False):
+
+        self.n = A.nrow
+
+        # Converting A to compressed sparse column format
+        A_CSC = A.to_csc()
+
+        # Create a lower triangular matrix from A_CSC
+        T = A_CSC.tril(-1)
+
+        (colptrT, rowindT, valuesT) = T.get_numpy_arrays()
+
+        (colptr, rowind, lvals, d, alpha) = lldl_@index@_@type@(self.n, self.n,
+                                                                A.diag(),
+                                                                colptrT, rowindT,
+                                                                valuesT, memory)
+        self.nnzL = len(lvals)
+
+        self.L = MakeCSCSparseMatrix_@index@_t_@type@_t(nrow=self.n,
+                                                        ncol=self.n,
+                                                        nnz=self.nnzL,
+                                                        ind= < @index@_t * > cnp.PyArray_DATA(colptr),
+                                                        row= < @index@_t * > cnp.PyArray_DATA(rowind),
+                                                        val= < @type@_t * > cnp.PyArray_DATA(lvals),
+                                                        #                                               ind=Li, row=Lr, val=Lv,
+                                                        store_symmetric=False, store_zero=False)
+
+    def get_L(self):
+        return self.L
+
+# cpdef dense_lsolve(CSCSparseMatrix_@index@_t_@type@_t L,
+# np.ndarray[DDTYPE_t, ndim=1] x):
+
+# cpdef dense_ltsolve(CSCSparseMatrix_@index@_t_@type@_t L,
+# np.ndarray[DDTYPE_t, ndim=1] x):
