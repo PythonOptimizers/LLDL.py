@@ -14,11 +14,11 @@ cimport cython
 @cython.boundscheck(False)
 @cython.cdivision(True)
 {% endraw %}
-cpdef lldl_@index@_@type@(unsigned int n, unsigned int m,
-                          cnp.ndarray[cnp.@type | lower@_t, ndim=1] adiag,
-                          cnp.ndarray[cnp.@index | lower@_t, ndim=1] colptrT,
-                          cnp.ndarray[cnp.@index | lower@_t, ndim=1] rowindT,
-                          cnp.ndarray[cnp.@type | lower@_t, ndim=1] valuesT,
+def lldl_@index@_@type@(unsigned int n, unsigned int m,
+                          adiag,
+                          colptrT,
+                          rowindT,
+                          valuesT,
                           unsigned int memory):
     """"Compute the incomplete LDL^T factorization of A with limited-memory.
 
@@ -48,6 +48,9 @@ cpdef lldl_@index@_@type@(unsigned int n, unsigned int m,
     cdef cnp.ndarray[cnp.@type | lower@_t, ndim = 1] lvals = np.zeros(nnzLmax)
     cdef cnp.ndarray[cnp.@index | lower@_t, ndim = 1] rowind = np.zeros(nnzLmax, dtype=np.@index | lower@)
     cdef cnp.ndarray[cnp.@index | lower@_t, ndim = 1] colptr = np.zeros(n + 1, dtype=np.@index | lower@)
+
+    print colptrT
+    print rowindT
 
     # Compute the 2-norm of columns of A.
     for col in xrange(n):
@@ -249,7 +252,7 @@ cdef bint attempt_lldl_@index@_@type@(unsigned int n,
             # temp = np.array(indr, dtype=np.@index|lower@)
             a = indr[perm[kth:]]
             a.sort()
-            indr[:nzcol] = a[:]  # temp
+            indr[kth:nzcol] = a[:]  # temp
 
         new_col_start = colptr[col]
         new_col_end = new_col_start + nz_to_keep
