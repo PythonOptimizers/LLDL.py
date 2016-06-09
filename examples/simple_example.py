@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from lldl.src.lldl_INT64_FLOAT64 import lldl_INT64_FLOAT64 as sl
+from lldl.solver import BaseLLDLSolver
 from scipy.sparse import csc_matrix, eye, diags, tril
 import numpy as np
 
@@ -21,17 +21,41 @@ colptrT = np.asarray(T.indptr, dtype=np.int64)
 rowindT = np.asarray(T.indices, dtype=np.int64)
 valuesT = np.asarray(T.data, dtype=np.float64)
 
-(colptr, rowind, lvals, d, alpha) = sl(
-    n, n, adiag, colptrT, rowindT, valuesT, memory=5)
 
-L = csc_matrix((lvals, rowind, colptr), shape=(n, n))
+lldl = BaseLLDLSolver(n, adiag, colptrT, rowindT, valuesT, memory=5)
+lldl.factorize()
+
+L = csc_matrix((lldl.lvals, lldl.rowind, lldl.colptr), shape=(n, n))
 print 'L:'
 print L.toarray()
 
 
 L = L + eye(n)  # strict lower triangular matrix is returned.
 print u"==== LDLᵀ ===="
-print (L * diags(d, 0) * L.T)
+print (L * diags(lldl.d, 0) * L.T)
 
 print u"==== Error :  A - LDLᵀ ===="
-print ((L * diags(d, 0) * L.T) - A).toarray()
+print ((L * diags(lldl.d, 0) * L.T) - A).toarray()
+
+rhs = A*np.ones([n,1])
+print rhs
+
+print lldl.colptr
+print lldl.rowind
+print lldl.lvals
+
+x = lldl.solve(rhs.flatten())
+
+print x
+#
+#x = lldl.solve()
+
+
+
+
+
+
+
+
+
+

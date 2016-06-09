@@ -467,7 +467,7 @@ cdef cnp.@index | lower@_t deep_first_sort_@index@_@type@(int j,
 #
 #     return top
 
-cpdef dense_lsolve_@index@_@type@(cnp.@index | lower@_t n,
+cpdef dense_lsolve_@index@_@type@(n,
                                   cnp.ndarray[cnp.@index | lower@_t, ndim=1] Li,
                                   cnp.ndarray[cnp.@index | lower@_t, ndim=1] Lr,
                                   cnp.ndarray[cnp.@type | lower@_t, ndim=1] Lv,
@@ -479,12 +479,11 @@ cpdef dense_lsolve_@index@_@type@(cnp.@index | lower@_t n,
 
     # TODO: checks on inputs
     for j in xrange(n):
-        x[j] /= Lv[Li[j]]
-        for p in xrange(Li[j] + 1, Li[j + 1]):
+        for p in xrange(Li[j], Li[j + 1]):
             x[Lr[p]] -= Lv[p] * x[j]
     return
 
-cpdef dense_ltsolve_@index@_@type@(cnp.@index | lower@_t n,
+cpdef dense_ltsolve_@index@_@type@(n,
                                    cnp.ndarray[cnp.@index | lower@_t, ndim=1] Li,
                                    cnp.ndarray[cnp.@index | lower@_t, ndim=1] Lr,
                                    cnp.ndarray[cnp.@type | lower@_t, ndim=1] Lv,
@@ -496,7 +495,6 @@ cpdef dense_ltsolve_@index@_@type@(cnp.@index | lower@_t n,
 
     # TODO: checks on inputs
     for j in xrange(n - 1, -1, -1):
-        for p in xrange(Li[j] + 1, Li[j + 1]):
+        for p in xrange(Li[j], Li[j + 1]):
             x[j] -= Lv[p] * x[Lr[p]]
-        x[j] /= Lv[Li[j]]
     return
