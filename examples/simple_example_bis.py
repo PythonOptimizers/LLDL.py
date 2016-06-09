@@ -13,8 +13,9 @@ A = LLSparseMatrix(mm_filename=sys.argv[1],
 print "A:"
 print A
 
-solver = CySparseLLDLSolver(A, 48)
-(Ls, d, a) = solver.factorize()
+n = A.nrow
+solver = CySparseLLDLSolver(A, n)
+(Ls, d) = solver.factorize()
 
 
 print 'L:'
@@ -32,11 +33,13 @@ print (L * D * Lt)
 print u"==== Error :  A - LDLᵀ ===="
 print ((L * D * Lt) - A).to_ll().to_ndarray()
 
-
-rhs = A*np.ones(48)
+print "==== Solving A x = b ===="
+rhs = A * np.ones(n)
+print "b:"
 print rhs
 
 x = solver.solve(rhs)
-
+print "x:"
 print x
 
+assert np.allclose(x, np.ones(n))

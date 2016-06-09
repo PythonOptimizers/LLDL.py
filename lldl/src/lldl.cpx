@@ -49,9 +49,6 @@ def lldl_@index@_@type@(unsigned int n, unsigned int m,
     cdef cnp.ndarray[cnp.@index | lower@_t, ndim = 1] rowind = np.zeros(nnzLmax, dtype=np.@index | lower@)
     cdef cnp.ndarray[cnp.@index | lower@_t, ndim = 1] colptr = np.zeros(n + 1, dtype=np.@index | lower@)
 
-    print colptrT
-    print rowindT
-
     # Compute the 2-norm of columns of A.
     for col in xrange(n):
         for k in xrange(colptrT[col], colptrT[col + 1]):
@@ -78,11 +75,8 @@ def lldl_@index@_@type@(unsigned int n, unsigned int m,
 
     success = False
     tired = False
-    print 'colptrT:', colptrT
 
     colptr[:n + 1] = colptrT
-
-    print 'colptr:', colptr
 
     while not (success or tired):
 
