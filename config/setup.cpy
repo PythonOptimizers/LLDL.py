@@ -116,7 +116,7 @@ lldl_ext.append(Extension(name="lldl.src.lldl_@index_type@_@element_type@",
     {% endfor %}
 {% endfor %}
 
-packages_list = ['lldl', 'lldl.src', 'tests']
+packages_list = ['lldl', 'lldl.src']
 
 
 # PACKAGE PREPARATION FOR EXCLUSIVE C EXTENSIONS

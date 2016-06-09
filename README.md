@@ -1,7 +1,7 @@
 # LLDL.py
 Limited-memory LDL factorization in Python
 
-[![Build Status](https://travis-ci.com/PythonOptimizers/LLDL.py.svg?token=33z5zptBt5SzXC4ZvLpF&branch=rmaster)](https://travis-ci.com/PythonOptimizers/LLDL.py)
+[![Build Status](https://travis-ci.com/PythonOptimizers/LLDL.py.svg?token=33z5zptBt5SzXC4ZvLpF&branch=master)](https://travis-ci.com/PythonOptimizers/LLDL.py)
 
 
 Details of the implemented method are published in the folling paper:
@@ -42,16 +42,7 @@ To run the tests:
     ```
 
 3. Install `LLDL.py`
-
-   - Python version
     ```bash
-    python setup.py build
-    python setup.py install [--prefix=...]
-    ```
-
-   - Cython version
-    ```bash
-    python generate_code.py
     python setup.py build
     python setup.py install [--prefix=...]
     ```
@@ -82,7 +73,6 @@ Additionnal dependencies:
     ```
 
 ### Running tests
-
     ```bash
     py.test -v tests
     ```
