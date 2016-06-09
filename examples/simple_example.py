@@ -14,7 +14,6 @@ T = tril(A, -1, format="csc")
 
 print 'A:'
 print A
-print A.toarray()
 
 adiag = A.diagonal()
 colptrT = np.asarray(T.indptr, dtype=np.int64)
@@ -37,25 +36,14 @@ print (L * diags(lldl.d, 0) * L.T)
 print u"==== Error :  A - LDLᵀ ===="
 print ((L * diags(lldl.d, 0) * L.T) - A).toarray()
 
-rhs = A*np.ones([n,1])
+print "==== Solving A x = b ===="
+rhs = A * np.ones(n)
+print "b:"
 print rhs
 
-print lldl.colptr
-print lldl.rowind
-print lldl.lvals
+x = lldl.solve(rhs)
 
-x = lldl.solve(rhs.flatten())
-
+print "x:"
 print x
-#
-#x = lldl.solve()
 
-
-
-
-
-
-
-
-
-
+assert np.allclose(x, np.ones(n))
