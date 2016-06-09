@@ -13,6 +13,7 @@ __pycache__/
 *.pxd
 setup.py
 *.c
+release.sh
 
 # Distribution / packaging
 .Python

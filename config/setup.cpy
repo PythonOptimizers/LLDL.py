@@ -80,18 +80,6 @@ default_library_dir = lldl_config.get('DEFAULT',
 use_debug_symbols = lldl_config.getboolean('CODE_GENERATION',
                                            'use_debug_symbols')
 
-# OPTIONAL
-build_cysparse_ext = False
-if lldl_config.has_section('CYSPARSE'):
-    build_cysparse_ext = True
-    cysparse_rootdir = lldl_config.get('CYSPARSE',
-                                       'cysparse_rootdir').split(os.pathsep)
-    if cysparse_rootdir == '':
-        raise ValueError("You must specify where CySparse source code is" +
-                         "located. Use `cysparse_rootdir` to specify its" +
-                         "path.")
-
-
 ##########################################################################
 # EXTENSIONS
 ##########################################################################
@@ -127,21 +115,6 @@ lldl_ext.append(Extension(name="lldl.src.lldl_@index_type@_@element_type@",
 
     {% endfor %}
 {% endfor %}
-
-# if build_cysparse_ext:
-# {% for index_type in index_list %}
-#     {% for element_type in type_list %}
-#         cysparse_ext_params_@index_type@_@element_type@ = copy.deepcopy(ext_params)
-#         cysparse_ext_params_@index_type@_@element_type@['include_dirs'].extend(cysparse_rootdir)
-#         cysparse_ext_params_@index_type@_@element_type@['include_dirs'].extend(lldl_include_dirs)
-#         lldl_ext.append(Extension(name="lldl.src.cysparse_lldl_@index_type@_@element_type@",
-#                                   sources=['lldl/src/cysparse_lldl_@index_type@_@element_type@.pxd',
-#                                            'lldl/src/cysparse_lldl_@index_type@_@element_type@.pyx'],
-#                                   **cysparse_ext_params_@index_type@_@element_type@))
-#
-#     {% endfor %}
-# {% endfor %}
-
 
 packages_list = ['lldl', 'lldl.src', 'tests']
 
