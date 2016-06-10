@@ -21,3 +21,4 @@ install:
 
 script:
   - py.test -v tests/
+  - python examples/simple_example.py

@@ -73,6 +73,6 @@ Additionnal dependencies:
     ```
 
 ### Running tests
-    ```bash
-    py.test -v tests
-    ```
+```bash
+py.test -v tests
+```
