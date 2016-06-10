@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-{% raw %}
+
 """LLDL.py: A Limited-memory LDL factorization in Python
 
 LLDL.py is a Python implementation of a modification of [Lin and More's limited-memory Cholesky factorization](http://dx.doi.org/10.1137/S1064827597327334) code-named ICFS for symmetric positive definite matrices. LLDL implements a similar limited-memory scheme for symmetric indefinite matrices and thus also for symmetric quasi-definite matrices.
@@ -7,7 +7,6 @@ LLDL.py is a Python implementation of a modification of [Lin and More's limited-
 
 S. Arreckx   <sylvain.arreckx@gmail.com>
 """
-{% endraw %}
 # The file setup.py is automatically generated
 # Generate it with
 # python generate_code -s
@@ -98,23 +97,19 @@ else:
 
 context_ext_params = copy.deepcopy(ext_params)
 lldl_ext = []
-{% for index_type in index_list %}
-    {% for element_type in type_list %}
-base_ext_params_@index_type@_@element_type@ = copy.deepcopy(ext_params)
-lldl_ext.append(Extension(name="lldl.src.lldl_@index_type@_@element_type@",
-                          sources=['lldl/src/lldl_@index_type@_@element_type@.pxd',
-                                   'lldl/src/lldl_@index_type@_@element_type@.pyx'],
-                          **base_ext_params_@index_type@_@element_type@))
+base_ext_params_INT64_FLOAT64 = copy.deepcopy(ext_params)
+lldl_ext.append(Extension(name="lldl.src.lldl_INT64_FLOAT64",
+                          sources=['lldl/src/lldl_INT64_FLOAT64.pxd',
+                                   'lldl/src/lldl_INT64_FLOAT64.pyx'],
+                          **base_ext_params_INT64_FLOAT64))
 
-# numpy_ext_params_@index_type@_@element_type@ = copy.deepcopy(ext_params)
-# numpy_ext_params_@index_type@_@element_type@['include_dirs'].extend(lldl_include_dirs)
-# lldl_ext.append(Extension(name="lldl.src.numpy_lldl_@index_type@_@element_type@",
-#                           sources=['lldl/src/numpy_lldl_@index_type@_@element_type@.pxd',
-#                                    'lldl/src/numpy_lldl_@index_type@_@element_type@.pyx'],
-#                           **numpy_ext_params_@index_type@_@element_type@))
+# numpy_ext_params_INT64_FLOAT64 = copy.deepcopy(ext_params)
+# numpy_ext_params_INT64_FLOAT64['include_dirs'].extend(lldl_include_dirs)
+# lldl_ext.append(Extension(name="lldl.src.numpy_lldl_INT64_FLOAT64",
+#                           sources=['lldl/src/numpy_lldl_INT64_FLOAT64.pxd',
+#                                    'lldl/src/numpy_lldl_INT64_FLOAT64.pyx'],
+#                           **numpy_ext_params_INT64_FLOAT64))
 
-    {% endfor %}
-{% endfor %}
 
 packages_list = ['lldl', 'lldl.src']
 
@@ -146,13 +141,11 @@ setup_args = {
     'description' : DOCLINES[0],
     'long_description' : "\n".join(DOCLINES[2:]),
     # Author details
-{% raw %}
+
     'author': 'Sylvain Arreckx, Dominique Orban and Nikolaj van Omme',
-{% endraw %}
     'maintainer': "Sylvain Arreckx",
-{% raw %}
+
     'maintainer_email': "sylvain.arreckx@gmail.com",
-{% endraw %}
     'summary': "Limited-memory LDL factorization in Python.",
     'url': "https://github.com/PythonOptimizers/LLDL.py.git",
     'download_url': "https://github.com/PythonOptimizers/LLDL.py.git",

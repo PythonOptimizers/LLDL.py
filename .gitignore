@@ -5,15 +5,18 @@ site.cfg
 __pycache__/
 *.py[cod]
 
+config
+generate_code.py
+release.sh
+
 # C extensions
 *.so
+*.cpx
+*.cpd
+*.cpy
 
-# Generated files
-*.pyx
-*.pxd
-setup.py
-*.c
-release.sh
+# QR_MUMPS related
+trace.svg
 
 # Distribution / packaging
 .Python
@@ -39,6 +42,9 @@ var/
 *.manifest
 *.spec
 
+# OS X specific
+.DS_Store
+
 # Installer logs
 pip-log.txt
 pip-delete-this-directory.txt
@@ -52,7 +58,6 @@ htmlcov/
 nosetests.xml
 coverage.xml
 *,cover
-.hypothesis/
 
 # Translations
 *.mo
@@ -66,6 +71,3 @@ docs/_build/
 
 # PyBuilder
 target/
-
-#Ipython Notebook
-.ipynb_checkpoints
