@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
-from cysparse.sparse.ll_mat import PyLLSparseMatrix_Check, LLSparseMatrix
-from cysparse.common_types.cysparse_types import INT64_T, FLOAT64_T
+try:
+    from cysparse.sparse.ll_mat import PyLLSparseMatrix_Check, LLSparseMatrix
+    from cysparse.common_types.cysparse_types import INT64_T, FLOAT64_T
+except ImportError:
+    pass
 from lldl.src.lldl_INT64_FLOAT64 import lldl_INT64_FLOAT64 as sl
 from lldl.src.lldl_INT64_FLOAT64 import dense_lsolve_INT64_FLOAT64
 from lldl.src.lldl_INT64_FLOAT64 import dense_ltsolve_INT64_FLOAT64
@@ -9,7 +12,6 @@ import numpy as np
 
 
 class BaseLLDLSolver(object):
-    """."""
 
     def __init__(self, n, adiag, colptrT, rowindT, valuesT, memory=5):
         """Instantiate a :class:`BaseLLDLSolver` object.
